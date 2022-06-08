@@ -36,6 +36,8 @@ public class PageManager {
         return homePage;
     }
 
+
+
     /**
      * Use this method to get access to the login page object
      * anywhere inside your test case.
