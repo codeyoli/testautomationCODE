@@ -1,4 +1,4 @@
-package utils;
+package core;
 
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -52,7 +52,7 @@ public class Automations {
 
     /**
      * Use this method to determine whether an element extractable by the provided location
-     * is visible to the ende user or not.
+     * is visible to the ende User or not.
      *
      * @param location By object
      * @return boolean  true: element is visible,  false: element is not visible
@@ -94,7 +94,7 @@ public class Automations {
     }
 
     /**
-     * Use this method to invoke a user click on the element
+     * Use this method to invoke a User click on the element
      * extractable by the provided location ( coordinate )
      *
      * @param location By object

@@ -1,40 +1,44 @@
 package tests;
 
-import base.TestBase;
-import org.openqa.selenium.By;
-import org.testng.annotations.*;
-
-import static utils.DriverUtil.*;
-import static utils.Automations.*;
+import core.Excel;
+import org.testng.annotations.Test;
 
 
-@Listeners(utils.TestDetector.class)
-public class SmokeTest extends TestBase {
+public class SmokeTest {
 
 
-
-    @Test
-    public void verifyAppIsAccessible() {
-        //----Test Data
-        String testSite = "http://webdriveruniversity.com/index.html";
-        By loc_contact = By.cssSelector("#contact-us h1");
-        By loc_firstname_input = By.cssSelector("input[name='first_name']");
-
-        //----Test Steps
-        visit(testSite);
-        click(loc_contact);
-        switchToTab("Contact Us");
-        type(loc_firstname_input, "Murazzim");
-        closeWindow();
-        switchToTab("WebDriver");
+    private String path(String file) {
+        var path = System.getProperty("user.dir") + "/excel/" + file;
+        return path;
+    }
+    private void print(String value) {
+        System.out.println(value);
     }
 
 
     @Test
-    public void userCanSearchForTemplate() {
-        String testSite ="https://trello.com";
-
-        visit(testSite);
+    public void demo1() {
+        var path = path("testData.xlsx");
+        var excel = new Excel(path);
+        excel.useSheet("credentials");
+        print(excel.toString());
 
     }
-}
+
+
+    @Test
+    public void test1() {
+        var filePath = path("testData.xlsx");
+        var excel = new Excel(filePath);
+        excel.useSheet("credentials");
+
+        System.out.println();
+
+        excel.useSheet("flags");
+        System.out.println(excel);
+
+        excel.useSheet("sites");
+        System.out.println(excel);
+    }
+
+}//end::class
