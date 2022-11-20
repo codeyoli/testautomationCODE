@@ -19,8 +19,8 @@ public class Automation {
     static private final Duration timeLimit = Duration.ofSeconds(20);
     static private final Duration elemTimeLimit = Duration.ofSeconds(5);
 
-    // --- Browser Related --- //
-    static public class Browser {
+    // --- browser Related --- //
+    static public class browser {
         static public void open() {
             WebDriverManager.chromedriver().setup();
             driver = new ChromeDriver();
@@ -46,9 +46,9 @@ public class Automation {
         static public void previousPage() {
             driver.navigate().back();
         }
-    }//Browser
+    }//browser
 
-    static public class Locator {
+    static public class loc {
         static public By xp(String xpath) {
             return By.xpath(xpath);
         }
@@ -61,11 +61,11 @@ public class Automation {
             return By.id(value);
         }
 
-    }//Locator
+    }//loc
 
-    static public class User {
+    static public class user {
 
-        static public void gotoSite(String url) {
+        static public void visits(String url) {
             driver.manage().timeouts().pageLoadTimeout(timeLimit);
             driver.get(url);
         }
@@ -96,7 +96,7 @@ public class Automation {
             return elements;
         }
 
-        static public void click(By locator) {
+        static public void clicks(By locator) {
             try{
                 WebElement element = findElement(locator);
                 element = (WebElement) fluentWait.until(ExpectedConditions.elementToBeClickable(element));
@@ -106,7 +106,7 @@ public class Automation {
             }
         }
 
-        static public void type(By locator, String text) {
+        static public void types(By locator, String text) {
             try{
                 WebElement element = findElement(locator);
                 element = (WebElement) fluentWait.until(ExpectedConditions.visibilityOf(element));
@@ -126,9 +126,9 @@ public class Automation {
                 }
             }//end::for
         }
-    }//User
+    }//user
 
-    static public class Time {
+    static public class time {
         static public void sleepMili(int milisecond) {
             try{
                 Thread.sleep(milisecond);
@@ -153,7 +153,7 @@ public class Automation {
                 // DO NOTHING
             }
         }
-    }//Time
+    }//time
 }//end::class
 
 

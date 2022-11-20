@@ -5,7 +5,6 @@ import org.dhatim.fastexcel.reader.Cell;
 import org.dhatim.fastexcel.reader.ReadableWorkbook;
 import org.dhatim.fastexcel.reader.Row;
 import org.dhatim.fastexcel.reader.Sheet;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Formatter;
@@ -19,6 +18,8 @@ public class Excel {
     private Sheet currentSheet; // Current opened sheets
     private List<Row> currentSheetsAllRows;
     @Getter private Row currentRow;
+    @Getter static private String positionLetter="";
+    @Getter static private Integer positionRow = 0;
 
     // --- Constructor --- //
     public Excel(String path) {
@@ -57,25 +58,20 @@ public class Excel {
         return this;
     }
 
-    public Cell getDataAt(String address) {
-        ExcelColumn.processPosition(address);
-        int row = ExcelColumn.getPositionRow() - 1;
-        int col = ExcelColumn.toNumber(ExcelColumn.getPositionLetter()) - 1;
+    public Cell dataAt(String address) {
+        processPosition(address);
+        int row = getPositionRow() - 1;
+        int col = toNumber(getPositionLetter()) - 1;
         return currentSheetsAllRows.get(row).getCell(col);
     }
 
-    public Cell getDataAt(int row, int col) {
+    public Cell dataAt(int row, int col) {
         int fixedRow = --row;
         int fixedCol = --col;
         return currentSheetsAllRows.get(fixedRow)
                 .getCell(fixedCol);
     }
 
-    /**
-     * Returns all the row object from current sheet
-     *
-     * @return List of Row objects
-     */
     public List<Row> getAllRows() {
         try {
             currentSheetsAllRows = currentSheet.read();
@@ -114,4 +110,35 @@ public class Excel {
         return fm.toString();
     }
 
+
+    // ---- Helper Functions ----- //
+    private static int toNumber(String name) {
+        int number = 0;
+        for (int i = 0; i < name.length(); i++) {
+            number = number * 26 + (name.charAt(i) - ('A' - 1));
+        }
+        return number;
+    }
+
+    private static String toName(int number) {
+        StringBuilder sb = new StringBuilder();
+        while (number-- > 0) {
+            sb.append((char)('A' + (number % 26)));
+            number /= 26;
+        }
+        return sb.reverse().toString();
+    }
+
+    private static void processPosition(String position) {
+        String letter = "";
+        String number = "";
+        for(int i = 0; i < position.length(); i++) {
+            char c = position.charAt(i);
+            if(c >= '0' && c <= '9') number+= c;
+            else letter+=c;
+        }
+
+        positionLetter = letter;
+        positionRow = Integer.valueOf(number);
+    }
 }//end::class

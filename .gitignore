@@ -1,5 +1,6 @@
 .idea/
 target/
 reports/
+xel/
 *.iml
 *.class
