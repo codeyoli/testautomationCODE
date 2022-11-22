@@ -1,12 +1,11 @@
 {
-  "site": "https://trello.com",
+  "site": "https://vuejs.org/",
   "reports": {
     "extent": true,
-    "reportportal": true
+    "reportportal": false
   },
   "browser": {
     "choice": "chrome",
-    "mode": "headless",
-    "size": "1980,1080"
+    "headless": true
   }
 }

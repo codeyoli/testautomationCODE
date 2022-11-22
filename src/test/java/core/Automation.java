@@ -2,16 +2,31 @@ package core;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 import lombok.Getter;
-import org.openqa.selenium.*;
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.edge.EdgeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
+
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Class that abstracts the general UI automation activities
+ * Please reach the provided documentation before using this class
+ *
+ * @Author Nijat Muthar, ZULFI TECH, LLC
+ * @Date 11/22/2022
+ */
 public class Automation {
 
     static private final Duration timeLimit = Duration.ofSeconds(20);
@@ -22,7 +37,18 @@ public class Automation {
 
     // --- browser Related --- //
     static public class browser {
+
         static public void open() {
+            ConfigManager config = new ConfigManager();
+            String browserChoice = config.extract("$.browser.choice");
+            boolean isHeadless = config.extract("$.browser.headless");
+            driver = util.driverType(browserChoice, isHeadless);
+            fluentWait = new FluentWait(driver);
+            fluentWait.withTimeout(elemTimeLimit);
+            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+        }
+
+        static public void openChrome() {
             WebDriverManager.chromedriver().setup();
             driver = new ChromeDriver();
             fluentWait = new FluentWait(driver);
@@ -48,8 +74,6 @@ public class Automation {
             driver.navigate().back();
         }
     }//browser
-
-
 
 
     static public class elem {
@@ -111,22 +135,26 @@ public class Automation {
 
         static private By getLocator(String value) {
             By locator;
-            boolean isXpath =  value.contains("//")
+            boolean isXpath = value.contains("//")
                     || value.contains("/")
                     || value.contains("@");
-            if(!isXpath) return locator = css(value);
+            if (!isXpath) return locator = css(value);
             else return locator = xp(value);
         }
 
     }//elem
-
-
 
     static public class user {
 
         static public void visits(String url) {
             driver.manage().timeouts().pageLoadTimeout(timeLimit);
             driver.get(url);
+        }
+
+        static public void openTestSite() {
+            ConfigManager config = new ConfigManager();
+            String site = config.extract("$.site");
+            visits(site);
         }
 
         static public WebElement findElement(By locator) {
@@ -146,13 +174,13 @@ public class Automation {
         static public void clicks(By locator) {
             WebElement found =
                     (WebElement) fluentWait.until(ExpectedConditions.elementToBeClickable(locator)
-            );
+                    );
             found.click();
         }
 
         static public void clicks(WebElement element) {
             WebElement found =
-                    (WebElement)fluentWait.until(
+                    (WebElement) fluentWait.until(
                             ExpectedConditions.elementToBeClickable(element)
                     );
             found.click();
@@ -177,7 +205,6 @@ public class Automation {
             WebElement found = (WebElement) fluentWait.until(ExpectedConditions.visibilityOf(element));
             found.sendKeys(text);
         }
-
 
         static public void types(Elem elem, String text) {
             String reason = "Could not type into the element";
@@ -207,8 +234,15 @@ public class Automation {
                 }
             }//end::for
         }
-    }//user
 
+        static public String asksTextOf(By locator) {
+            WebElement element = findElement(locator);
+            WebElement found = (WebElement) fluentWait.until(
+                    ExpectedConditions.visibilityOfElementLocated(locator)
+            );
+            return found.getText();
+        }
+    }//user
 
 
     static public class time {
@@ -239,15 +273,55 @@ public class Automation {
     }//time'
 
 
-
     static public class util {
         static public String excelPath(String file) {
             String root = System.getProperty("user.dir")
                     + "/src/test/resources/excels/";
             return root + file;
         }
+
+        static public WebDriver driverType(String choice, boolean isHeadless) {
+            boolean isChrome = choice.equalsIgnoreCase("chrome");
+            boolean isChromium = choice.equalsIgnoreCase("chromium");
+            boolean isFirefox = choice.equalsIgnoreCase("firefox");
+            boolean isEdge = choice.equalsIgnoreCase("edge");
+            boolean isSafari = choice.equalsIgnoreCase("safari");
+
+            if (isChrome || isChromium) {
+                var options = new ChromeOptions();
+                options.addArguments("no-sandbox");
+                options.addArguments("--headless");
+                options.addArguments("disable-gpu");
+                options.addArguments("window-size=1900,1080");
+                options.addArguments("window-size=1900,1080");
+                WebDriverManager.chromedriver().setup();
+                if (isHeadless) return new ChromeDriver(options);
+                else return new ChromeDriver();
+            } else if (isFirefox) {
+                WebDriverManager.firefoxdriver().setup();
+                FirefoxOptions firefoxOptions = new FirefoxOptions();
+                firefoxOptions.setHeadless(true);
+                if (isHeadless) return new FirefoxDriver(firefoxOptions);
+                else return new FirefoxDriver();
+            } else if (isEdge) {
+                WebDriverManager.edgedriver().setup();
+                return new EdgeDriver();
+            } else if (isSafari) {
+                String osType = System.getProperty("os.name");
+                boolean isMac = osType.toLowerCase().contains("OS X")
+                        || osType.toLowerCase().contains("Mac");
+                if (isMac) {
+                    WebDriverManager.safaridriver().setup();
+                }
+                return null;
+            } else {
+                WebDriverManager.chromedriver().setup();
+                return new ChromeDriver();
+            }
+        }
     }//uil
 
+    // 1920, 1080
 
 }//end::class
 // https://github.com/dhatim/fastexcel

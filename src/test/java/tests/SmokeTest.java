@@ -26,7 +26,7 @@ public class SmokeTest {
         By loc_user = elem.css("#user");
 
         // Test Step
-        browser.open();
+        browser.openChrome();
         user.visits("https://trello.com");
         user.clicks(loc_login);
         user.types(loc_user, user1);
