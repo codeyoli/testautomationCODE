@@ -8,7 +8,7 @@
 
     <test name="Smoke Build Verification Test">
         <classes>
-            <class name="tests.SmokeTest"/>
+            <class name="tests.DemoTest"/>
         </classes>
     </test>
 </suite>

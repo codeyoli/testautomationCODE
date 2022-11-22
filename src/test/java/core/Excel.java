@@ -110,7 +110,6 @@ public class Excel {
         return fm.toString();
     }
 
-
     // ---- Helper Functions ----- //
     private static int toNumber(String name) {
         int number = 0;

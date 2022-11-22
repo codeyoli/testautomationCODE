@@ -14,50 +14,48 @@
     </properties>
 
     <dependencies>
-
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.18.24</version>
+            <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
             <version>4.6.0</version>
+            <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
             <version>7.6.1</version>
+            <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>io.github.bonigarcia</groupId>
             <artifactId>webdrivermanager</artifactId>
             <version>5.3.1</version>
+            <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>com.aventstack</groupId>
             <artifactId>extentreports</artifactId>
             <version>5.0.9</version>
+            <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>net.datafaker</groupId>
             <artifactId>datafaker</artifactId>
             <version>1.5.0</version>
+            <scope>test</scope>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.dhatim/fastexcel-reader -->
         <dependency>
             <groupId>org.dhatim</groupId>
             <artifactId>fastexcel-reader</artifactId>
             <version>0.14.0</version>
+            <scope>test</scope>
         </dependency>
-
-
     </dependencies>
 
     <build>
@@ -74,5 +72,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

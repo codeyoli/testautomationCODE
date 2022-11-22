@@ -7,17 +7,20 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
-
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 public class Automation {
 
-    @Getter static private WebDriver driver;
-    static private FluentWait fluentWait;
     static private final Duration timeLimit = Duration.ofSeconds(20);
     static private final Duration elemTimeLimit = Duration.ofSeconds(5);
+    @Getter
+    static private WebDriver driver;
+    static private FluentWait fluentWait;
+
+
 
     // --- browser Related --- //
     static public class browser {
@@ -27,7 +30,7 @@ public class Automation {
             fluentWait = new FluentWait(driver);
             fluentWait.withTimeout(elemTimeLimit);
             driver.manage().window().maximize();
-            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(15));
+            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
         }
 
         static public void close() {
@@ -48,7 +51,11 @@ public class Automation {
         }
     }//browser
 
-    static public class loc {
+
+
+
+    static public class elem {
+
         static public By xp(String xpath) {
             return By.xpath(xpath);
         }
@@ -61,7 +68,56 @@ public class Automation {
             return By.id(value);
         }
 
-    }//loc
+        static public By at(String address) {
+            String[] parts = address.split(":");
+            var excel = new Excel(util.excelPath("locations.xlsx"));
+            excel.useSheet(parts[0]); //page
+            var rowIdx = Integer.valueOf(parts[1]);
+            var row = excel.getRowAt(--rowIdx);
+            var locatorValue = row.getCellText(1);
+            return getLocator(locatorValue);
+        }
+
+        static public List<Element> all(String address) {
+            var excel = new Excel(util.excelPath("locations.xlsx"));
+            String[] parts = address.split(":");
+            String sheetName = parts[0];
+            System.out.println(sheetName);
+            excel.useSheet(parts[0]); //page
+            String range = parts[1];
+            String[] rangeParts = range.split("~");
+            Integer startIdx = Integer.valueOf(rangeParts[0]);
+            Integer endIdx = Integer.valueOf(rangeParts[1]);
+            List<Element> locators = new ArrayList<>();
+            startIdx--;
+            endIdx--;
+            for (int i = startIdx; i <= endIdx; i++) {
+                Element e = new Element();
+                int rIdx = i + 1;
+                String xlsInfo = sheetName + "&" + rIdx;
+                System.out.println("xlsInfo> " + xlsInfo);
+                e.setExcelAddress(xlsInfo);
+                var row = excel.getRowAt(i);
+                var locatorValue = row.getCellText(1);
+                var locator = getLocator(locatorValue);
+                e.setLocator(locator);
+                locators.add(e);
+            }
+            return locators;
+        }
+
+        static private By getLocator(String value) {
+            By locator;
+            boolean isXpath =  value.contains("//")
+                    || value.contains("/")
+                    || value.contains("@");
+            if(!isXpath) return locator = css(value);
+            else return locator = xp(value);
+        }
+
+    }//elem
+
+
 
     static public class user {
 
@@ -72,48 +128,60 @@ public class Automation {
 
         static public WebElement findElement(By locator) {
             WebElement element = null;
-            try{
-                ExpectedCondition condition = ExpectedConditions.presenceOfElementLocated(locator);
-                element = (WebElement) fluentWait.until(condition);
-            }catch (NoSuchElementException ex) {
-
-            }catch (TimeoutException timeout) {
-
-            }
+            ExpectedCondition condition = ExpectedConditions.visibilityOfElementLocated(locator);
+            element = (WebElement) fluentWait.until(condition);
             return element;
         }
 
         static public List<WebElement> findElements(By locator) {
             List<WebElement> elements = null;
-            try{
-                ExpectedCondition condition = ExpectedConditions.presenceOfAllElementsLocatedBy(locator);
-                elements = (List<WebElement>) fluentWait.until(condition);
-            }catch (NoSuchElementException ex) {
-
-            }catch (TimeoutException timeout) {
-
-            }
+            ExpectedCondition condition = ExpectedConditions.presenceOfAllElementsLocatedBy(locator);
+            elements = (List<WebElement>) fluentWait.until(condition);
             return elements;
         }
 
         static public void clicks(By locator) {
-            try{
-                WebElement element = findElement(locator);
-                element = (WebElement) fluentWait.until(ExpectedConditions.elementToBeClickable(element));
-                element.click();
-            }catch (TimeoutException timeout) {
-                System.out.println("Element was not clickable after 10 seconds");
-            }
+            WebElement element = (WebElement) fluentWait.until(
+                    ExpectedConditions.elementToBeClickable(locator)
+            );
+            element.click();
+        }
+
+        static public void clicks(Element elem) {
+            System.out.println("Ele Excel Info: " + elem.getExcelAddress());
+            StringBuilder sb = new StringBuilder();
+            sb.append("Could not click the element specified at sheet: ")
+                            .append(elem.getSheet())
+                                    .append(" at Row= " + elem.getRowIndex());
+            fluentWait.withMessage(sb.toString());
+            WebElement element = (WebElement) fluentWait.until(
+                    ExpectedConditions.elementToBeClickable(elem.getLocator())
+            );
+            element.click();
+        }
+
+        static public void clicks(WebElement element) {
+            WebElement elem =
+                    (WebElement)fluentWait.until(
+                            ExpectedConditions.elementToBeClickable(element)
+                    );
+            elem.click();
+        }
+
+        static public void highlight(By locator) {
+            WebElement element =
+                    (WebElement) fluentWait.until(
+                            ExpectedConditions.invisibilityOfElementLocated(locator)
+                    );
+            JavascriptExecutor jse = (JavascriptExecutor) driver;
+            String script = "arguments[0].setAttribute('style', 'border: 2px solid purple');";
+            jse.executeAsyncScript(script, element);
         }
 
         static public void types(By locator, String text) {
-            try{
-                WebElement element = findElement(locator);
-                element = (WebElement) fluentWait.until(ExpectedConditions.visibilityOf(element));
-                element.sendKeys(text);
-            }catch (TimeoutException timeout) {
-
-            }
+            WebElement element = findElement(locator);
+            element = (WebElement) fluentWait.until(ExpectedConditions.visibilityOf(element));
+            element.sendKeys(text);
         }
 
         static public void switchTab(String title) {
@@ -128,33 +196,45 @@ public class Automation {
         }
     }//user
 
+
+
     static public class time {
         static public void sleepMili(int milisecond) {
-            try{
+            try {
                 Thread.sleep(milisecond);
-            }catch (InterruptedException e){
+            } catch (InterruptedException e) {
                 // DO NOTHING
             }
         }
 
         static public void sleep(int second) {
-            try{
+            try {
                 Thread.sleep(second * 1000);
-            }catch (InterruptedException e){
+            } catch (InterruptedException e) {
                 // DO NOTHING
             }
         }
 
         static public void sleepMin(int minute) {
-            try{
+            try {
                 long duration = minute * 60 * 1000;
                 Thread.sleep(duration);
-            }catch (InterruptedException e){
+            } catch (InterruptedException e) {
                 // DO NOTHING
             }
         }
-    }//time
+    }//time'
+
+
+
+    static public class util {
+        static public String excelPath(String file) {
+            String root = System.getProperty("user.dir")
+                    + "/src/test/resources/excels/";
+            return root + file;
+        }
+    }//uil
+
+
 }//end::class
-
-
 // https://github.com/dhatim/fastexcel

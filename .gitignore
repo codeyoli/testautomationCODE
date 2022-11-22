@@ -4,3 +4,5 @@ reports/
 xel/
 *.iml
 *.class
+
+src/test/resources/excels/testData.xlsx

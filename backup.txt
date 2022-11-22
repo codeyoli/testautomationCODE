@@ -1,0 +1,24 @@
+
+
+
+
+static public List<By> multi(String address) {
+    var excel = new Excel(util.excelPath("locations.xlsx"));
+    String[] parts = address.split(":");
+    String sheetName = parts[0];
+    excel.useSheet(parts[0]); //page
+    String range = parts[1];
+    String[] rangeParts = range.split("~");
+    Integer startIdx = Integer.valueOf(rangeParts[0]);
+    Integer endIdx = Integer.valueOf(rangeParts[1]);
+    List<By> locators = new ArrayList<>();
+    startIdx--;
+    endIdx--;
+    for (int i = startIdx; i <= endIdx; i++) {
+        var row = excel.getRowAt(i);
+        var locatorValue = row.getCellText(1);
+        var locator = getLocator(locatorValue);
+        locators.add(locator);
+    }
+    return locators;
+}

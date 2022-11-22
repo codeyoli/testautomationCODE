@@ -2,7 +2,6 @@ package tests;
 
 import core.Excel;
 import org.openqa.selenium.By;
-import org.openqa.selenium.TimeoutException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import static core.Automation.*;
@@ -11,7 +10,7 @@ import static core.Automation.*;
 public class SmokeTest {
 
     private String path(String file) {
-        var path = System.getProperty("user.dir") + "/excel/" + file;
+        var path = System.getProperty("user.dir") + "/excels/" + file;
         return path;
     }
 
@@ -23,8 +22,8 @@ public class SmokeTest {
         Excel excel = new Excel(filePath).useSheet("logins");
         String user1 = excel.dataAt("A2").asString();
 
-        By loc_login = loc.xp("(//a[text()='Log in'])[1]");
-        By loc_user = loc.css("#user");
+        By loc_login = elem.xp("(//a[text()='Log in'])[1]");
+        By loc_user = elem.css("#user");
 
         // Test Step
         browser.open();
