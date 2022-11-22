@@ -20,8 +20,6 @@ public class Automation {
     static private WebDriver driver;
     static private FluentWait fluentWait;
 
-
-
     // --- browser Related --- //
     static public class browser {
         static public void open() {
@@ -68,17 +66,22 @@ public class Automation {
             return By.id(value);
         }
 
-        static public By at(String address) {
-            String[] parts = address.split(":");
+        static public Elem at(String address) {
             var excel = new Excel(util.excelPath("locations.xlsx"));
-            excel.useSheet(parts[0]); //page
-            var rowIdx = Integer.valueOf(parts[1]);
+            var e = new Elem();
+            String[] parts = address.split(":");
+            var sheetName = parts[0];
+            var rowNumber = parts[1];
+            excel.useSheet(sheetName);
+            var rowIdx = Integer.valueOf(rowNumber);
             var row = excel.getRowAt(--rowIdx);
             var locatorValue = row.getCellText(1);
-            return getLocator(locatorValue);
+            e.setLocator(getLocator(locatorValue));
+            e.setExcelAddress(sheetName + "&" + rowNumber);
+            return e;
         }
 
-        static public List<Element> all(String address) {
+        static public List<Elem> all(String address) {
             var excel = new Excel(util.excelPath("locations.xlsx"));
             String[] parts = address.split(":");
             String sheetName = parts[0];
@@ -88,11 +91,11 @@ public class Automation {
             String[] rangeParts = range.split("~");
             Integer startIdx = Integer.valueOf(rangeParts[0]);
             Integer endIdx = Integer.valueOf(rangeParts[1]);
-            List<Element> locators = new ArrayList<>();
+            List<Elem> locators = new ArrayList<>();
             startIdx--;
             endIdx--;
             for (int i = startIdx; i <= endIdx; i++) {
-                Element e = new Element();
+                Elem e = new Elem();
                 int rIdx = i + 1;
                 String xlsInfo = sheetName + "&" + rIdx;
                 System.out.println("xlsInfo> " + xlsInfo);
@@ -141,31 +144,47 @@ public class Automation {
         }
 
         static public void clicks(By locator) {
-            WebElement element = (WebElement) fluentWait.until(
-                    ExpectedConditions.elementToBeClickable(locator)
+            WebElement found =
+                    (WebElement) fluentWait.until(ExpectedConditions.elementToBeClickable(locator)
             );
-            element.click();
-        }
-
-        static public void clicks(Element elem) {
-            System.out.println("Ele Excel Info: " + elem.getExcelAddress());
-            StringBuilder sb = new StringBuilder();
-            sb.append("Could not click the element specified at sheet: ")
-                            .append(elem.getSheet())
-                                    .append(" at Row= " + elem.getRowIndex());
-            fluentWait.withMessage(sb.toString());
-            WebElement element = (WebElement) fluentWait.until(
-                    ExpectedConditions.elementToBeClickable(elem.getLocator())
-            );
-            element.click();
+            found.click();
         }
 
         static public void clicks(WebElement element) {
-            WebElement elem =
+            WebElement found =
                     (WebElement)fluentWait.until(
                             ExpectedConditions.elementToBeClickable(element)
                     );
-            elem.click();
+            found.click();
+        }
+
+        static public void clicks(Elem elem) {
+            String reason = "Could not click the element";
+            fluentWait.withMessage(elem.getErrorMessage(reason));
+            WebElement found = (WebElement) fluentWait.until(
+                    ExpectedConditions.elementToBeClickable(elem.getLocator())
+            );
+            found.click();
+        }
+
+        static public void types(By locator, String text) {
+            WebElement element = findElement(locator);
+            element = (WebElement) fluentWait.until(ExpectedConditions.visibilityOf(element));
+            element.sendKeys(text);
+        }
+
+        static public void types(WebElement element, String text) {
+            WebElement found = (WebElement) fluentWait.until(ExpectedConditions.visibilityOf(element));
+            found.sendKeys(text);
+        }
+
+
+        static public void types(Elem elem, String text) {
+            String reason = "Could not type into the element";
+            fluentWait.withMessage(elem.getErrorMessage(reason));
+            WebElement found = findElement(elem.getLocator());
+            found = (WebElement) fluentWait.until(ExpectedConditions.visibilityOf(found));
+            found.sendKeys(text);
         }
 
         static public void highlight(By locator) {
@@ -176,12 +195,6 @@ public class Automation {
             JavascriptExecutor jse = (JavascriptExecutor) driver;
             String script = "arguments[0].setAttribute('style', 'border: 2px solid purple');";
             jse.executeAsyncScript(script, element);
-        }
-
-        static public void types(By locator, String text) {
-            WebElement element = findElement(locator);
-            element = (WebElement) fluentWait.until(ExpectedConditions.visibilityOf(element));
-            element.sendKeys(text);
         }
 
         static public void switchTab(String title) {

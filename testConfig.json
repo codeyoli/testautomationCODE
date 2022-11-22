@@ -1,0 +1,12 @@
+{
+  "site": "https://trello.com",
+  "reports": {
+    "extent": true,
+    "reportportal": true
+  },
+  "browser": {
+    "choice": "chrome",
+    "mode": "headless",
+    "size": "1980,1080"
+  }
+}
