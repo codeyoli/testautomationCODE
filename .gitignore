@@ -2,6 +2,7 @@
 target/
 reports/
 xel/
+upload.sh
 *.iml
 *.class
 

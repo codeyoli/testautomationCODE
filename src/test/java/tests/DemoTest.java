@@ -1,17 +1,15 @@
 package tests;
 
 import org.testng.annotations.Test;
-import static core.Automation.*;
-import static core.Automation.elem.*;
+import static core.UIAction.*;
 
 public class DemoTest {
 
+
     @Test
-    public void test1() {
-        browser.open();
-        user.openTestSite();
-        String ret = user.asksTextOf(x("//h1"));
-        System.out.println("Extracted: " + ret);
-        browser.close();
+    public void test2() {
+        start("https://trello.com");
+        clicksAll("home:3~7");
+        end();
     }
 }//end::class
