@@ -14,25 +14,16 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
-
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-/**
- * Class that abstracts the general UI automation activities
- * Please reach the provided documentation before using this class
- *
- * @Author Nijat Muthar, ZULFI TECH, LLC
- * @Date 11/22/2022
- */
-public class Automation {
 
+public class Automation {
     static private final Duration timeLimit = Duration.ofSeconds(20);
     static private final Duration elemTimeLimit = Duration.ofSeconds(5);
-    @Getter
-    static private WebDriver driver;
+    @Getter static private WebDriver driver;
     static private FluentWait fluentWait;
 
     // --- browser Related --- //
