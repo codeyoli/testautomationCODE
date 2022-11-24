@@ -22,8 +22,8 @@ public class SmokeTest {
         Excel excel = new Excel(filePath).useSheet("logins");
         String user1 = excel.dataAt("A2").asString();
 
-        By loc_login = elem.xp("(//a[text()='Log in'])[1]");
-        By loc_user = elem.css("#user");
+        By loc_login = elem.x("(//a[text()='Log in'])[1]");
+        By loc_user = elem.s("#user");
 
         // Test Step
         browser.openChrome();

@@ -5,7 +5,7 @@
     "reportportal": false
   },
   "browser": {
-    "choice": "chrome",
-    "headless": true
+    "choice": "firefox",
+    "headless": false
   }
 }

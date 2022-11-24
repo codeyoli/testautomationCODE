@@ -1,6 +1,5 @@
 package core;
 
-import io.github.bonigarcia.wdm.WebDriverManager;
 import lombok.Getter;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -11,6 +10,7 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
+import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
@@ -78,11 +78,11 @@ public class Automation {
 
     static public class elem {
 
-        static public By xp(String xpath) {
+        static public By x(String xpath) {
             return By.xpath(xpath);
         }
 
-        static public By css(String query) {
+        static public By s(String query) {
             return By.cssSelector(query);
         }
 
@@ -138,8 +138,8 @@ public class Automation {
             boolean isXpath = value.contains("//")
                     || value.contains("/")
                     || value.contains("@");
-            if (!isXpath) return locator = css(value);
-            else return locator = xp(value);
+            if (!isXpath) return locator = s(value);
+            else return locator = x(value);
         }
 
     }//elem
