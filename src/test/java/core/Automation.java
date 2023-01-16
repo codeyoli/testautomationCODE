@@ -19,10 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-
 public class Automation {
     static private final Duration timeLimit = Duration.ofSeconds(20);
-    static private final Duration elemTimeLimit = Duration.ofSeconds(5);
     @Getter static private WebDriver driver;
     static private FluentWait fluentWait;
 
@@ -34,16 +32,18 @@ public class Automation {
             String browserChoice = config.extract("$.browser.choice");
             boolean isHeadless = config.extract("$.browser.headless");
             driver = util.driverType(browserChoice, isHeadless);
+            driver.manage().window().maximize();
             fluentWait = new FluentWait(driver);
-            fluentWait.withTimeout(elemTimeLimit);
+            fluentWait.withTimeout(timeLimit);
             driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
         }
 
         static public void openChrome() {
             WebDriverManager.chromedriver().setup();
             driver = new ChromeDriver();
+            driver.manage().window().maximize();
             fluentWait = new FluentWait(driver);
-            fluentWait.withTimeout(elemTimeLimit);
+            fluentWait.withTimeout(timeLimit);
             driver.manage().window().maximize();
             driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
         }
@@ -233,10 +233,29 @@ public class Automation {
             );
             return found.getText();
         }
+
+        static public Boolean canSee(By locator) {
+            WebElement element = findElement(locator);
+            WebElement found = (WebElement) fluentWait.until(
+                    ExpectedConditions.visibilityOfElementLocated(locator)
+            );
+            return found.isDisplayed();
+        }
+
+        static public void canSee(Elem elem) {
+            String reason = "Could not see the element";
+            fluentWait.withMessage(elem.getErrorMessage(reason));
+            WebElement found = (WebElement) fluentWait.until(
+                    ExpectedConditions.visibilityOfElementLocated(elem.getLocator())
+            );
+            found.click();
+        }
+
     }//user
 
 
     static public class time {
+
         static public void sleepMili(int milisecond) {
             try {
                 Thread.sleep(milisecond);
@@ -265,6 +284,7 @@ public class Automation {
 
 
     static public class util {
+
         static public String excelPath(String file) {
             String root = System.getProperty("user.dir")
                     + "/src/test/resources/excels/";
