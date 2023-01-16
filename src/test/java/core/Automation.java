@@ -1,5 +1,6 @@
 package core;
 
+import io.github.bonigarcia.wdm.WebDriverManager;
 import lombok.Getter;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -10,20 +11,21 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
-import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
+
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-
 public class Automation {
+
     static private final Duration timeLimit = Duration.ofSeconds(20);
     static private final Duration elemTimeLimit = Duration.ofSeconds(5);
-    @Getter static private WebDriver driver;
+    @Getter
+    static private WebDriver driver;
     static private FluentWait fluentWait;
 
     // --- browser Related --- //
@@ -247,7 +249,7 @@ public class Automation {
 
         static public void sleep(int second) {
             try {
-                Thread.sleep(second * 1000);
+                Thread.sleep(second * 1000L);
             } catch (InterruptedException e) {
                 // DO NOTHING
             }
@@ -255,14 +257,13 @@ public class Automation {
 
         static public void sleepMin(int minute) {
             try {
-                long duration = minute * 60 * 1000;
+                long duration = (long) minute * 60 * 1000;
                 Thread.sleep(duration);
             } catch (InterruptedException e) {
                 // DO NOTHING
             }
         }
-    }//time'
-
+    }//time
 
     static public class util {
         static public String excelPath(String file) {
@@ -311,8 +312,6 @@ public class Automation {
             }
         }
     }//uil
-
-    // 1920, 1080
 
 }//end::class
 // https://github.com/dhatim/fastexcel
