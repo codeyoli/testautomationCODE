@@ -2,14 +2,15 @@ package tests;
 
 import org.testng.annotations.Test;
 import static core.UIAction.*;
+import static core.Automation.*;
 
 public class DemoTest {
 
-
     @Test
-    public void test2() {
+    public void codeTestGround() {
         start("https://trello.com");
-        clicksAll("home:3~7");
+        click("home:2");
+        time.sleep(10);
         end();
     }
 }//end::class

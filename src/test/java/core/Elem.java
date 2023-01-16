@@ -4,14 +4,21 @@ import lombok.Data;
 import org.openqa.selenium.By;
 
 public @Data class Elem {
+
+    // -- Fields -- //
     private By locator;
     private String excelAddress;
 
+
+    // -- Constructor -- //
     public Elem(){}
 
     public Elem(By by){
         this.locator = by;
     }
+
+
+    // -- Methods -- //
 
     public String getSheet() {
         return excelAddress.split("&")[0];
@@ -28,4 +35,4 @@ public @Data class Elem {
                 .append("at Row: " + getRowIndex());
         return sb.toString();
     }
-}
+}//end::class

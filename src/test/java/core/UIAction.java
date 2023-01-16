@@ -4,7 +4,6 @@ import static core.Automation.elem.*;
 
 public class UIAction {
 
-
     static public void start(String url) {
         browser.open();
         user.visits(url);
@@ -27,4 +26,16 @@ public class UIAction {
         user.types(at(address), text);
     }
 
-}
+    static public String textOf(String address) {
+        return user.asksTextOf(at(address).getLocator());
+    }
+
+    static public boolean canSee(String address) {
+        return user.canSee(at(address).getLocator());
+    }
+
+    static public void switchWindow(String title) {
+        user.switchTab(title);
+    }
+
+}//end::class
