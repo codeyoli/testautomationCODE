@@ -24,8 +24,7 @@ public class Automation {
 
     static private final Duration timeLimit = Duration.ofSeconds(20);
     static private final Duration elemTimeLimit = Duration.ofSeconds(5);
-    @Getter
-    static private WebDriver driver;
+    @Getter static private WebDriver driver;
     static private FluentWait fluentWait;
 
     // --- browser Related --- //
@@ -268,7 +267,7 @@ public class Automation {
     static public class util {
         static public String excelPath(String file) {
             String root = System.getProperty("user.dir")
-                    + "/src/test/resources/excels/";
+                    + "/excels/";
             return root + file;
         }
 
