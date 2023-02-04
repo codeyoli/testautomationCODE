@@ -26,5 +26,4 @@ public class UIAction {
     static public void type(String address, String text) {
         user.types(at(address), text);
     }
-
 }
