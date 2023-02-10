@@ -2,18 +2,14 @@ package core;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 import lombok.Getter;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
-import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.FluentWait;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -23,9 +19,19 @@ import java.util.Set;
 public class Automation {
 
     static private final Duration timeLimit = Duration.ofSeconds(20);
-    static private final Duration elemTimeLimit = Duration.ofSeconds(5);
     @Getter static private WebDriver driver;
-    static private FluentWait fluentWait;
+    static private WebDriverWait waits;
+    static private String windowHandle;
+
+
+    static public By $(String query) {
+        if(query.contains("//") || query.contains("@")) {
+            return By.xpath(query);
+        }
+        else {
+            return By.cssSelector(query);
+        }
+    }
 
     // --- browser Related --- //
     static public class browser {
@@ -35,16 +41,18 @@ public class Automation {
             String browserChoice = config.extract("$.browser.choice");
             boolean isHeadless = config.extract("$.browser.headless");
             driver = util.driverType(browserChoice, isHeadless);
-            fluentWait = new FluentWait(driver);
-            fluentWait.withTimeout(elemTimeLimit);
+            waits = new WebDriverWait(driver, timeLimit);
             driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+        }
+
+        static public void maxmize() {
+            driver.manage().window().maximize();
         }
 
         static public void openChrome() {
             WebDriverManager.chromedriver().setup();
             driver = new ChromeDriver();
-            fluentWait = new FluentWait(driver);
-            fluentWait.withTimeout(elemTimeLimit);
+            waits = new WebDriverWait(driver, timeLimit);
             driver.manage().window().maximize();
             driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
         }
@@ -64,6 +72,11 @@ public class Automation {
 
         static public void previousPage() {
             driver.navigate().back();
+        }
+
+        static public void acceptPopUp() {
+            Alert alert = waits.until(ExpectedConditions.alertIsPresent());
+            alert.accept();
         }
     }//browser
 
@@ -143,80 +156,62 @@ public class Automation {
             driver.get(url);
         }
 
-        static public void openTestSite() {
-            ConfigManager config = new ConfigManager();
-            String site = config.extract("$.site");
-            visits(site);
+        static public WebElement findsElement(By locator) {
+            WebElement elem;
+            try{
+                elem = waits.until(ExpectedConditions.visibilityOfElementLocated(locator));
+            }catch (StaleElementReferenceException error) {
+                waits.withMessage("Could not find the element -> " + locator.toString());
+                elem = waits.until(ExpectedConditions.visibilityOfElementLocated(locator));
+            }
+            return elem;
         }
 
-        static public WebElement findElement(By locator) {
-            WebElement element = null;
-            ExpectedCondition condition = ExpectedConditions.visibilityOfElementLocated(locator);
-            element = (WebElement) fluentWait.until(condition);
-            return element;
-        }
-
-        static public List<WebElement> findElements(By locator) {
-            List<WebElement> elements = null;
-            ExpectedCondition condition = ExpectedConditions.presenceOfAllElementsLocatedBy(locator);
-            elements = (List<WebElement>) fluentWait.until(condition);
-            return elements;
+        static public List<WebElement> findsElements(By locator) {
+            List<WebElement> elems = waits.until(ExpectedConditions.presenceOfAllElementsLocatedBy(locator));
+            return elems;
         }
 
         static public void clicks(By locator) {
-            WebElement found =
-                    (WebElement) fluentWait.until(ExpectedConditions.elementToBeClickable(locator)
-                    );
+            WebElement found = findsElement(locator);
+            found = waits.until(ExpectedConditions.elementToBeClickable(found));
+            highlight(found);
             found.click();
         }
 
         static public void clicks(WebElement element) {
-            WebElement found =
-                    (WebElement) fluentWait.until(
-                            ExpectedConditions.elementToBeClickable(element)
-                    );
+            WebElement found = waits.until(ExpectedConditions.elementToBeClickable(element));
             found.click();
         }
 
-        static public void clicks(Elem elem) {
-            String reason = "Could not click the element";
-            fluentWait.withMessage(elem.getErrorMessage(reason));
-            WebElement found = (WebElement) fluentWait.until(
-                    ExpectedConditions.elementToBeClickable(elem.getLocator())
-            );
-            found.click();
-        }
 
         static public void types(By locator, String text) {
-            WebElement element = findElement(locator);
-            element = (WebElement) fluentWait.until(ExpectedConditions.visibilityOf(element));
-            element.sendKeys(text);
-        }
-
-        static public void types(WebElement element, String text) {
-            WebElement found = (WebElement) fluentWait.until(ExpectedConditions.visibilityOf(element));
+            WebElement found = findsElement(locator);
+            highlight(found);
             found.sendKeys(text);
         }
 
-        static public void types(Elem elem, String text) {
-            String reason = "Could not type into the element";
-            fluentWait.withMessage(elem.getErrorMessage(reason));
-            WebElement found = findElement(elem.getLocator());
-            found = (WebElement) fluentWait.until(ExpectedConditions.visibilityOf(found));
+
+        static public void types(WebElement element, String text) {
+            WebElement found = waits.until(ExpectedConditions.visibilityOf(element));
             found.sendKeys(text);
         }
 
         static public void highlight(By locator) {
-            WebElement element =
-                    (WebElement) fluentWait.until(
-                            ExpectedConditions.invisibilityOfElementLocated(locator)
-                    );
-            JavascriptExecutor jse = (JavascriptExecutor) driver;
+            WebElement found = findsElement(locator)
+;            JavascriptExecutor jse = (JavascriptExecutor) driver;
             String script = "arguments[0].setAttribute('style', 'border: 2px solid purple');";
-            jse.executeAsyncScript(script, element);
+            jse.executeScript(script, found);
         }
 
-        static public void switchTab(String title) {
+        static public void highlight(WebElement element) {
+            WebElement found = waits.until(ExpectedConditions.visibilityOf(element));
+            JavascriptExecutor jse = (JavascriptExecutor)driver;
+            String script = "arguments[0].setAttribute('style', 'border: 2px solid purple');";
+            jse.executeScript(script, found);
+        }
+
+        static public void opensTabWith(String title) {
             Set<String> ids = driver.getWindowHandles();
             for (String each : ids) {
                 driver.switchTo().window(each);
@@ -227,12 +222,43 @@ public class Automation {
             }//end::for
         }
 
+        static public void changeToFrame() {
+            windowHandle = driver.getWindowHandle();
+            WebElement frame = findsElement($("//iframe"));
+            driver = driver.switchTo().frame(frame);
+        }
+
+        static public void changeToMainPage() {
+            driver = driver.switchTo().window(windowHandle);
+        }
+
+        static public void opensTabWithUrl(String urlPart) {
+            Set<String> ids = driver.getWindowHandles();
+            for (String each : ids) {
+                driver.switchTo().window(each);
+                String wholeUrl = driver.getCurrentUrl();
+                boolean isPart = wholeUrl.contains(urlPart);
+                if (isPart) break;
+            }//end::for
+        }
+
+        static public boolean canSee(By locator) {
+            WebElement element = findsElement(locator);
+            return element.isDisplayed();
+        }
+
         static public String asksTextOf(By locator) {
-            WebElement element = findElement(locator);
-            WebElement found = (WebElement) fluentWait.until(
-                    ExpectedConditions.visibilityOfElementLocated(locator)
-            );
+            WebElement found = findsElement(locator);
             return found.getText();
+        }
+
+        static public List<String> asksAllTextOf(By locator) {
+            List<WebElement> found = findsElements(locator);
+            List<String> texts = new ArrayList<>();
+            for(WebElement e : found) {
+                texts.add(e.getText());
+            }
+            return texts;
         }
     }//user
 
@@ -280,14 +306,15 @@ public class Automation {
 
             if (isChrome || isChromium) {
                 var options = new ChromeOptions();
+                options.addArguments("--disable-notifications");
                 options.addArguments("no-sandbox");
-                options.addArguments("--headless");
+                //options.addArguments("--headless");
                 options.addArguments("disable-gpu");
                 options.addArguments("window-size=1900,1080");
                 options.addArguments("window-size=1900,1080");
                 WebDriverManager.chromedriver().setup();
                 if (isHeadless) return new ChromeDriver(options);
-                else return new ChromeDriver();
+                else return new ChromeDriver(options);
             } else if (isFirefox) {
                 WebDriverManager.firefoxdriver().setup();
                 FirefoxOptions firefoxOptions = new FirefoxOptions();

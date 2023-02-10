@@ -1,5 +1,9 @@
 {
-  "site": "https://vuejs.org/",
+  "site": "https://yearup--staging.sandbox.lightning.force.com/",
+  "user": {
+    "name": "nijatmn@gmail.com",
+    "pass": "pubg!max2030"
+  },
   "reports": {
     "extent": true,
     "reportportal": false

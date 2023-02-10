@@ -5,5 +5,4 @@ xel/
 upload.sh
 *.iml
 *.class
-
-src/test/resources/excels/testData.xlsx
+testConfig.json
