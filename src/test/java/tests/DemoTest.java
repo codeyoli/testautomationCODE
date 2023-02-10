@@ -26,6 +26,15 @@ public class DemoTest {
         By page_header = $(".noSecondHeader");
         By continue_button = $("input[name='save']");
 
+        // All report types related
+        By s_section = $("//div[4]//span[text()='S']");
+        By super_report_type_contact = $("//th/a[text()='SUPER_REPORT_TYPE_Contact']");
+        By preview_layout = $("input[name='previewLayout']");
+
+        // Report
+        By ask_amount_2015 = $("//label[text()='2015 Ask Amount']");
+
+
 
         browser.open();
         browser.maxmize();
@@ -41,6 +50,18 @@ public class DemoTest {
         user.clicks(report_types);
         user.changeToFrame();
         user.canSee(page_header);
-        browser.close();
+        user.clicks(continue_button);
+
+        user.changeToFrame();
+        user.clicks(s_section);
+        user.changeToFrame();
+        user.clicks(super_report_type_contact);
+        user.changeToFrame();
+        user.clicks(preview_layout);
+
+        user.opensTabWithUrl("analytics");
+        user.highlight(ask_amount_2015);
+
+        //browser.close();
     }
 }//end::class

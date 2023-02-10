@@ -223,13 +223,18 @@ public class Automation {
         }
 
         static public void changeToFrame() {
+            time.sleep(2);
+            By loc_iframe = $("//iframe");
             windowHandle = driver.getWindowHandle();
-            WebElement frame = findsElement($("//iframe"));
-            driver = driver.switchTo().frame(frame);
+            WebElement frame = findsElement(loc_iframe);
+            if(frame.isDisplayed()){
+                driver.switchTo().defaultContent();
+                driver.switchTo().frame(frame);
+            }
         }
 
         static public void changeToMainPage() {
-            driver = driver.switchTo().window(windowHandle);
+            driver = driver.switchTo().defaultContent();
         }
 
         static public void opensTabWithUrl(String urlPart) {
