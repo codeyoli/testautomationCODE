@@ -10,11 +10,23 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.io.File;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+/***
+ * Wrapper class that abstracts the low level selenium code for achieving great
+ * level of abstracting to the testers. Please see provided documentary from Zulfi
+ * tech on Box platform for tutorials and detailed documentation.
+ *
+ *
+ * @author  Nijat Muhtar
+ * Last updated:  Feb 11, 2023
+ *
+ */
 public class Automation {
 
     static private final Duration timeLimit = Duration.ofSeconds(5);
@@ -42,12 +54,13 @@ public class Automation {
                     .dockerScreenResolution("1920x1080x24")
                     .enableRecording()
                     .dockerRecordingOutput(util.root() + "/video/");
-            config.enableVnc();
+            //config.enableVnc();
+            config.config().setDockerRecordingPrefix(TestDetection.currentTestCaseName +"__");
             driver = config.create();
             waits = new WebDriverWait(driver, timeLimit);
             driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20));
             driver.manage().window().setSize(new Dimension(1920, 1080));
-            System.out.println("See test run at: " + config.getDockerNoVncUrl());
+            //System.out.println("See test run at: " + config.getDockerNoVncUrl());
         }
 
 
@@ -171,7 +184,7 @@ public class Automation {
         }
 
         static public void changeToFrame() {
-            time.sleep(2);
+            time.pauseSec(2);
             By loc_iframe = $("//iframe");
             windowHandle = driver.getWindowHandle();
             WebElement frame = findsElement(loc_iframe);
@@ -217,15 +230,8 @@ public class Automation {
 
 
     static public class time {
-        static public void sleepMili(int milisecond) {
-            try {
-                Thread.sleep(milisecond);
-            } catch (InterruptedException e) {
-                // DO NOTHING
-            }
-        }
 
-        static public void sleep(int second) {
+        static public void pauseSec(int second) {
             try {
                 Thread.sleep(second * 1000L);
             } catch (InterruptedException e) {
@@ -233,7 +239,7 @@ public class Automation {
             }
         }
 
-        static public void sleepMin(int minute) {
+        static public void pauseMin(int minute) {
             try {
                 long duration = (long) minute * 60 * 1000;
                 Thread.sleep(duration);
@@ -246,14 +252,12 @@ public class Automation {
     static public class util {
 
         static public String root() {
-            String path = System.getProperty("user.dir");
-            return path;
+            return System.getProperty("user.dir");
         }
 
         static public String excelPath(String file) {
-            String root = System.getProperty("user.dir")
-                    + "/excels/";
-            return root + file;
+            String path = root() + "/excels/";
+            return path + file;
         }
 
         static public WebDriver driverType(String choice, boolean isHeadless) {
@@ -295,6 +299,28 @@ public class Automation {
                 WebDriverManager.chromedriver().setup();
                 return new ChromeDriver();
             }
+        }
+
+        /**
+         * Use this to delete the recorded video of passed test cases. This method is effective when
+         * the video recording is enabled for test execution and TestDetection is registered as test listener.
+         *
+         * @param prefix video prefix text
+         */
+        static public void deletePassedRecordings(String prefix) {
+            File directory = new File(Automation.util.root()+"/video/");
+            File[] files = directory.listFiles();
+            for (File file : files) {
+                if (file.isFile() && file.getName().startsWith(prefix)) {
+                    if (file.delete()) {
+                        String message = "The file " + file.getName() + " was successfully deleted";
+                        System.out.println(message);
+                    } else {
+                        String message = "The file " + file.getName() + " could not be deleted";
+                        System.out.println(message);
+                    }
+                }
+            }//end::for
         }
     }//uil
 }//end::class

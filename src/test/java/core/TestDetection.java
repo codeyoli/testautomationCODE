@@ -5,13 +5,16 @@ import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 import org.testng.*;
 
+import java.io.File;
+
 
 public class TestDetection
         implements ISuiteListener, ITestListener {
 
     private ExtentReports reports;
     private ExtentSparkReporter spark;
-    private ExtentTest testCase;
+    public static ExtentTest testCase;
+    public static String currentTestCaseName;
 
 
     // --- Test Suite Related --- //
@@ -50,13 +53,15 @@ public class TestDetection
     // ---- Before Individual Test Case Execution --- //
     public void onTestStart(ITestResult testCase) {
         String name = testCase.getName();
+        currentTestCaseName = name;
         this.testCase = reports.createTest(name);
         Logs.init(this.testCase);
     }
 
     // --- Test Case Result --- //
     public void onTestSuccess(ITestResult result) {
-
+        String name = result.getName();
+        Automation.util.deletePassedRecordings(name);
     }
 
     public void onTestFailure(ITestResult result) {
@@ -70,4 +75,6 @@ public class TestDetection
     public void onTestFailedWithTimeout(ITestResult result) {
 
     }
+
+
 }//end::class

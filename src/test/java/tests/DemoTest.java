@@ -1,11 +1,13 @@
 package tests;
 
 import org.testng.Assert;
+import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 import pages.Pages;
 import static core.Automation.*;
 
 
+@Listeners(core.TestDetection.class)
 public class DemoTest {
 
     @Test
@@ -39,4 +41,5 @@ public class DemoTest {
 
         Assert.assertEquals(actual, "Nijat");
     }
+
 }//end::class
