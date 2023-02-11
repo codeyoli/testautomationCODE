@@ -10,7 +10,6 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +17,7 @@ import java.util.Set;
 
 public class Automation {
 
-    static private final Duration timeLimit = Duration.ofSeconds(20);
+    static private final Duration timeLimit = Duration.ofSeconds(5);
     @Getter static private WebDriver driver;
     static private WebDriverWait waits;
     static private String windowHandle;
@@ -36,10 +35,26 @@ public class Automation {
     // --- browser Related --- //
     static public class browser {
 
+        static public void openWithDocker() {
+            WebDriverManager config = WebDriverManager
+                    .chromedriver()
+                    .browserInDocker()
+                    .dockerScreenResolution("1920x1080x24")
+                    .enableRecording()
+                    .dockerRecordingOutput(util.root() + "/video/");
+            config.enableVnc();
+            driver = config.create();
+            waits = new WebDriverWait(driver, timeLimit);
+            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20));
+            driver.manage().window().setSize(new Dimension(1920, 1080));
+            System.out.println("See test run at: " + config.getDockerNoVncUrl());
+        }
+
+
+
         static public void open() {
-            ConfigManager config = new ConfigManager();
-            String browserChoice = config.extract("$.browser.choice");
-            boolean isHeadless = config.extract("$.browser.headless");
+            String browserChoice = TestConfig.extract("$.browser.choice");
+            boolean isHeadless = TestConfig.extract("$.browser.headless");
             driver = util.driverType(browserChoice, isHeadless);
             waits = new WebDriverWait(driver, timeLimit);
             driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
@@ -81,73 +96,6 @@ public class Automation {
     }//browser
 
 
-    static public class elem {
-
-        static public By x(String xpath) {
-            return By.xpath(xpath);
-        }
-
-        static public By s(String query) {
-            return By.cssSelector(query);
-        }
-
-        static public By id(String value) {
-            return By.id(value);
-        }
-
-        static public Elem at(String address) {
-            var excel = new Excel(util.excelPath("locations.xlsx"));
-            var e = new Elem();
-            String[] parts = address.split(":");
-            var sheetName = parts[0];
-            var rowNumber = parts[1];
-            excel.useSheet(sheetName);
-            var rowIdx = Integer.valueOf(rowNumber);
-            var row = excel.getRowAt(--rowIdx);
-            var locatorValue = row.getCellText(1);
-            e.setLocator(getLocator(locatorValue));
-            e.setExcelAddress(sheetName + "&" + rowNumber);
-            return e;
-        }
-
-        static public List<Elem> all(String address) {
-            var excel = new Excel(util.excelPath("locations.xlsx"));
-            String[] parts = address.split(":");
-            String sheetName = parts[0];
-            System.out.println(sheetName);
-            excel.useSheet(parts[0]); //page
-            String range = parts[1];
-            String[] rangeParts = range.split("~");
-            Integer startIdx = Integer.valueOf(rangeParts[0]);
-            Integer endIdx = Integer.valueOf(rangeParts[1]);
-            List<Elem> locators = new ArrayList<>();
-            startIdx--;
-            endIdx--;
-            for (int i = startIdx; i <= endIdx; i++) {
-                Elem e = new Elem();
-                int rIdx = i + 1;
-                String xlsInfo = sheetName + "&" + rIdx;
-                System.out.println("xlsInfo> " + xlsInfo);
-                e.setExcelAddress(xlsInfo);
-                var row = excel.getRowAt(i);
-                var locatorValue = row.getCellText(1);
-                var locator = getLocator(locatorValue);
-                e.setLocator(locator);
-                locators.add(e);
-            }
-            return locators;
-        }
-
-        static private By getLocator(String value) {
-            By locator;
-            boolean isXpath = value.contains("//")
-                    || value.contains("/")
-                    || value.contains("@");
-            if (!isXpath) return locator = s(value);
-            else return locator = x(value);
-        }
-
-    }//elem
 
     static public class user {
 
@@ -296,6 +244,12 @@ public class Automation {
     }//time
 
     static public class util {
+
+        static public String root() {
+            String path = System.getProperty("user.dir");
+            return path;
+        }
+
         static public String excelPath(String file) {
             String root = System.getProperty("user.dir")
                     + "/excels/";
@@ -343,6 +297,5 @@ public class Automation {
             }
         }
     }//uil
-
 }//end::class
 // https://github.com/dhatim/fastexcel

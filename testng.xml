@@ -1,0 +1,12 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd" >
+<suite name="Year Up UI Automation Suite">
+    <listeners>
+<!--        <listener class-name="core.retry.TestAnnotationMutator"/>-->
+    </listeners>
+
+    <test name="demo">
+        <classes>
+            <class name="tests.DemoTest"/>
+        </classes>
+    </test>
+</suite>

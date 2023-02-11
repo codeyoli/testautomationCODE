@@ -5,7 +5,7 @@ import com.jayway.jsonpath.JsonPath;
 import java.io.BufferedReader;
 import java.io.FileReader;
 
-public class ConfigManager {
+public class TestConfig {
 
     /**
      * Reads the file content and coverts to string
@@ -13,7 +13,7 @@ public class ConfigManager {
      * @param filePath String path to the target file
      * @return String: file content converted to string
      */
-    private String read(String filePath) {
+    private static String read(String filePath) {
         String finalText = null;
         try {
             FileReader fr = new FileReader(filePath);
@@ -40,7 +40,7 @@ public class ConfigManager {
      *
      * @return String: json data converted to string
      */
-    private String getConfig() {
+    private static String getConfig() {
         String path = System.getProperty("user.dir") + "/testConfig.json";
         String payload = read(path).trim();
         return payload;
@@ -55,7 +55,7 @@ public class ConfigManager {
      * @param <T>   extracted data's data type
      * @return extracted data
      */
-    public <T> T extract(String query) {
+    public static <T> T extract(String query) {
         T extracted = JsonPath.read(getConfig(), query);
         return extracted;
     }

@@ -2,10 +2,16 @@ package core;
 
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.model.Media;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class Steps {
+import java.util.Base64;
 
-    static public ExtentTest testCase;
+public class Logs {
+
+    private static ExtentTest testCase;
+    private static final Logger LOGGER = LoggerFactory.getLogger("binary_data_logger");
+
 
     static public void init(ExtentTest tc) {
         testCase = tc;
@@ -50,4 +56,16 @@ public class Steps {
     static public void _img(String base64) {
         testCase.info(base64);
     }
+
+
+    public static void _RPINFO(String message) {
+        LOGGER.warn("RP_MESSAGE#{}#{}",message);
+    }
+
+
+    public static void _RPIMG(String base64, String message) {
+        LOGGER.info("RP_MESSAGE#BASE64#{}#{}", base64, message);
+    }
+
+
 }

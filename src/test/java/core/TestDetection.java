@@ -2,15 +2,12 @@ package core;
 
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
-import com.aventstack.extentreports.markuputils.CodeLanguage;
-import com.aventstack.extentreports.markuputils.ExtentColor;
-import com.aventstack.extentreports.markuputils.MarkupHelper;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 import org.testng.*;
 
 
 public class TestDetection
-        implements ISuiteListener, ITestListener, IInvokedMethodListener {
+        implements ISuiteListener, ITestListener {
 
     private ExtentReports reports;
     private ExtentSparkReporter spark;
@@ -54,15 +51,7 @@ public class TestDetection
     public void onTestStart(ITestResult testCase) {
         String name = testCase.getName();
         this.testCase = reports.createTest(name);
-        Steps.init(this.testCase);
-    }
-
-    public void beforeInvocation(IInvokedMethod method, ITestResult testResult) {
-
-    }
-
-    public void afterInvocation(IInvokedMethod method, ITestResult testResult) {
-
+        Logs.init(this.testCase);
     }
 
     // --- Test Case Result --- //
@@ -81,6 +70,4 @@ public class TestDetection
     public void onTestFailedWithTimeout(ITestResult result) {
 
     }
-
-
 }//end::class

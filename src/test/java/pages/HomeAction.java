@@ -1,9 +1,4 @@
-package actions;
-
-import core.Elem;
-
-import static core.Automation.*;
-import static core.Automation.elem.*;
+package pages;
 
 public class HomeAction {
 
