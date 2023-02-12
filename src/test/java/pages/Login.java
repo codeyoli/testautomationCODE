@@ -1,7 +1,6 @@
 package pages;
 
 import core.TestConfig;
-import lombok.extern.java.Log;
 import org.openqa.selenium.By;
 import static core.Automation.*;
 

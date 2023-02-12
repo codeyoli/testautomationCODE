@@ -1,15 +1,19 @@
 {
   "site": "https://yearup--staging.sandbox.lightning.force.com/",
-  "user": {
-    "name": "nijatmn@gmail.com",
-    "pass": "pubg!max2030"
+
+  "browser": {
+    "choice": "safari",
+    "video": true,
+    "vnc": false
   },
+
   "reports": {
     "extent": true,
     "reportportal": false
   },
-  "browser": {
-    "choice": "chrome",
-    "headless": false
+
+  "user": {
+    "name": "nijatmn@gmail.com",
+    "pass": "pubg!max2030"
   }
 }

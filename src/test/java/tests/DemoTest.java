@@ -1,45 +1,36 @@
 package tests;
 
-import org.testng.Assert;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
-import pages.Pages;
-import static core.Automation.*;
 
+//@Listeners(core.TestDetection.class)
+public class DemoTest extends TestRunner {
 
-@Listeners(core.TestDetection.class)
-public class DemoTest {
 
     @Test
-    public void demo_test_case_1(){
+    public void test_new_stuff() {
 
-        browser.openWithDocker();
-        Pages.login.openStaging()
-                .loginAsAdmin();
+        // --- Element Locations --- //
+        String computer_tab = "//ul[@class='top-menu notmobile']/li/a[@href='/computers']";
+        String electronics_tab = "//ul[@class='top-menu notmobile']/li/a[@href='/electronics']";
+        String login_button = ".ico-login";
+        String email_input = "input#Email";
+        String pass_input = "input#Password";
+        String sign_in = "[class='button-1 login-button']";
 
-        Pages.home.visitSetUpPage();
-
-        Pages.setUp.searchFor("Report Types")
-                .openAllReportTypes().withInitial("S")
-                .selectReportOf("SUPER_REPORT_TYPE_Contact")
-                .thenPreviewLayout()
-                .verifyLayoutPageContacts();
-
-        browser.close();
-    }
-
-
-    @Test()
-    public void retry_sample_test() {
-
-        browser.open();
-        user.visits("https://trello.com");
-        user.clicks($("[class='Buttonsstyles__Button-sc-1jwidxo-0 kTwZBr']"));
-        user.types($("input#user"), "ahotmanager@gmail.com");
-        String actual = user.asksTextOf($("input#login"));
-        browser.close();
-
-        Assert.assertEquals(actual, "Nijat");
+        // --- Test Script ---- //
+        startAutomation();
+        user.visits("https://demo.nopcommerce.com/");
+        user.at(computer_tab).clicks();
+        user.pauseForSec(2);
+        user.at(electronics_tab).clicks();
+        user.pauseForSec(2);
+        user.at(login_button).clicks();
+        user.at(email_input).types("tester@gmail.com");
+        user.pauseForSec(2);
+        user.at(pass_input).types("StrongPass123!");
+        user.at(sign_in).clicks();
+        stopAutomation();
     }
 
 }//end::class

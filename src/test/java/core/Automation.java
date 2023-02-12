@@ -1,7 +1,6 @@
 package core;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
-import lombok.Getter;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -11,7 +10,7 @@ import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.io.File;
+
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +29,7 @@ import java.util.Set;
 public class Automation {
 
     static private final Duration timeLimit = Duration.ofSeconds(5);
-    @Getter static private WebDriver driver;
+    static private WebDriver driver;
     static private WebDriverWait waits;
     static private String windowHandle;
 
@@ -47,6 +46,53 @@ public class Automation {
     // --- browser Related --- //
     static public class browser {
 
+        static private WebDriverManager getWebDriverManager(String type) {
+            if(type.equalsIgnoreCase("chrome")) {
+                return WebDriverManager.chromedriver();
+            }
+            else if(type.equalsIgnoreCase("firefox")) {
+                return WebDriverManager.firefoxdriver();
+            }
+            else if(type.equalsIgnoreCase("safari")) {
+                return WebDriverManager.safaridriver();
+            }
+            else if(type.equalsIgnoreCase("edge")) {
+                return WebDriverManager.edgedriver();
+            }
+            else {
+                // default
+                return WebDriverManager.chromedriver();
+            }
+        }
+
+        static public void openBrowser() {
+            String choice = TestConfig.extract("$.browser.choice");
+            boolean video = TestConfig.extract("$.browser.video");
+            boolean vnc = TestConfig.extract("$.browser.vnc");
+
+            if(video) {
+                // docker environment
+                WebDriverManager manager = getWebDriverManager(choice);
+                manager.browserInDocker().dockerScreenResolution("1920x1080x24");
+                manager.enableRecording().dockerRecordingOutput(Automation.util.root() + "/video/");
+                if(vnc) { manager.enableVnc();}
+                String videoName = TestDetection.currentTestCaseName +"__";
+                manager.config().setDockerRecordingPrefix(videoName);
+                driver = manager.create();
+                waits = new WebDriverWait(driver, timeLimit);
+                driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20));
+                driver.manage().window().setSize(new Dimension(1920, 1080));
+            }
+            else {
+                // normal environment
+                WebDriverManager manager = getWebDriverManager(choice);
+                driver = manager.create();
+                waits = new WebDriverWait(driver, timeLimit);
+                driver.manage().window().maximize();
+                driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20));
+            }
+        }
+
         static public void openWithDocker() {
             WebDriverManager config = WebDriverManager
                     .chromedriver()
@@ -62,7 +108,6 @@ public class Automation {
             driver.manage().window().setSize(new Dimension(1920, 1080));
             //System.out.println("See test run at: " + config.getDockerNoVncUrl());
         }
-
 
 
         static public void open() {
@@ -107,8 +152,6 @@ public class Automation {
             alert.accept();
         }
     }//browser
-
-
 
     static public class user {
 
@@ -228,7 +271,6 @@ public class Automation {
         }
     }//user
 
-
     static public class time {
 
         static public void pauseSec(int second) {
@@ -299,28 +341,6 @@ public class Automation {
                 WebDriverManager.chromedriver().setup();
                 return new ChromeDriver();
             }
-        }
-
-        /**
-         * Use this to delete the recorded video of passed test cases. This method is effective when
-         * the video recording is enabled for test execution and TestDetection is registered as test listener.
-         *
-         * @param prefix video prefix text
-         */
-        static public void deletePassedRecordings(String prefix) {
-            File directory = new File(Automation.util.root()+"/video/");
-            File[] files = directory.listFiles();
-            for (File file : files) {
-                if (file.isFile() && file.getName().startsWith(prefix)) {
-                    if (file.delete()) {
-                        String message = "The file " + file.getName() + " was successfully deleted";
-                        System.out.println(message);
-                    } else {
-                        String message = "The file " + file.getName() + " could not be deleted";
-                        System.out.println(message);
-                    }
-                }
-            }//end::for
         }
     }//uil
 }//end::class
