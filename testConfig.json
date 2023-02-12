@@ -2,8 +2,8 @@
   "site": "https://yearup--staging.sandbox.lightning.force.com/",
 
   "browser": {
-    "choice": "safari",
-    "video": true,
+    "choice": "chrome",
+    "video": false,
     "vnc": false
   },
 

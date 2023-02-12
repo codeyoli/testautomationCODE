@@ -1,5 +1,6 @@
 package pages;
 
+import core.UserActions;
 import org.openqa.selenium.By;
 
 import static core.Automation.*;
@@ -8,53 +9,60 @@ import static core.Automation.*;
 
 public class SetUp {
 
+    private UserActions user;
+
     // --------- Element Location --------- //
-    private final By quick_find = $("[placeholder='Quick Find']");
-    private final By report_types = $("//mark[text()='Report Types']");
-    private final By page_header = $(".noSecondHeader");
-    private final By continue_button = $("input[name='save']");
-    private final By preview_layout = $("input[name='previewLayout']");
+    private final String quick_find = "[placeholder='Quick Find']";
+    private final String report_types = "//mark[text()='Report Types']";
+    private final String page_header = ".noSecondHeader";
+    private final String continue_button = "input[name='save']";
+    private final String preview_layout = "input[name='previewLayout']";
+
+
+    public SetUp(UserActions actions) {
+        user = actions;
+    }
 
 
     // ----------- Methods ---------------//
     public SetUp searchFor(String query) {
-        user.types(quick_find, query);
+        user.at(quick_find).types(query);
         return this;
     }
 
     public SetUp openAllReportTypes() {
-        user.clicks(report_types);
+        user.at(report_types).clicks();
         user.changeToFrame();
-        user.canSee(page_header);
-        user.clicks(continue_button);
+        user.at(page_header).canSeeIt();
+        user.at(continue_button).clicks();
         return this;
     }
 
     public SetUp withInitial(String initial) {
-        By initialElem = $("//div[4]//span[text()='"+initial+"']");
+        String initialElem = "//div[4]//span[text()='"+initial+"']";
         user.changeToFrame();
-        user.clicks(initialElem);
+        user.at(initialElem).clicks();
         return this;
     }
 
 
     public SetUp selectReportOf(String title) {
-        By chosen_report = $("//th/a[text()='"+title+"']");
+        String chosen_report = "//th/a[text()='"+title+"']";
         user.changeToFrame();
-        user.clicks(chosen_report);
+        user.at(chosen_report).clicks();
         return this;
     }
 
     public SetUp thenPreviewLayout() {
         user.changeToFrame();
-        user.clicks(preview_layout);
+        user.at(preview_layout).clicks();
         return this;
     }
 
     public SetUp verifyLayoutPageContacts(String ...contacts) {
-        By ask_amount_2015 = $("//label[text()='2015 Ask Amount']");
+        String ask_amount_2015 = "//label[text()='2015 Ask Amount']";
         user.opensTabWithUrl("analytics");
-        user.highlight(ask_amount_2015);
+        user.at(ask_amount_2015).highlightIt();
         return this;
     }
 }//end::class

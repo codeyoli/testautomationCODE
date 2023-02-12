@@ -1,10 +1,11 @@
 package pages;
 
 import core.TestConfig;
-import org.openqa.selenium.By;
-import static core.Automation.*;
+import core.UserActions;
 
 public class Login {
+
+    private UserActions user;
 
     // ---- Test Data ------ //
     private final String staging = TestConfig.extract("$.site");
@@ -12,9 +13,14 @@ public class Login {
     private final String password = TestConfig.extract("$.user.pass");
 
     // ---- Element Locations ----//
-    static public final By user_name = $("input#username");
-    static public final By user_pass = $("input#password");
-    static public final By login_button = $("input#Login");
+    private final String input_user_name = "input#username";
+    private final String input_user_pass = "input#password";
+    private final String login_button = "input#Login";
+
+
+    public Login(UserActions actions) {
+        user = actions;
+    }
 
 
     public Login openStaging() {
@@ -23,9 +29,10 @@ public class Login {
     }
 
     public Login loginAsAdmin() {
-        user.types(user_name, username);
-        user.types(user_pass, password);
-        user.clicks(login_button);
+
+        user.at(input_user_name).types(username);
+        user.at(input_user_pass).types(password);
+        user.at(login_button).clicks();
         return this;
     }
 }

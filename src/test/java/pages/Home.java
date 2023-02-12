@@ -1,20 +1,21 @@
 package pages;
 
-import org.openqa.selenium.By;
-
-import static core.Automation.*;
-
-
+import core.UserActions;
 
 public class Home {
 
-    By gear_icon = $("(//ul[@class='slds-global-actions']//li)[6]");
-    By setup_button = $("li#related_setup_app_home");
+    private UserActions user;
+    private final String gear_icon = "(//ul[@class='slds-global-actions']//li)[6]";
+    private final String setup_button = "li#related_setup_app_home";
 
-    public void visitSetUpPage() {
-        user.clicks(gear_icon);
-        user.clicks(setup_button);
-        user.opensTabWithUrl("SetupOneHome");
+
+    public Home(UserActions actions) {
+        user = actions;
     }
 
+    public void visitSetUpPage() {
+        user.at(gear_icon).clicks();
+        user.at(setup_button).clicks();
+        user.opensTabWithUrl("SetupOneHome");
+    }
 }

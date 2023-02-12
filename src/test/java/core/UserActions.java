@@ -12,13 +12,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public class UiActions {
+public class UserActions {
 
     private final Duration timeLimit = Duration.ofSeconds(5);
     // --------- Fields ----------//
     private WebDriver driver;
     private WebDriverWait waits;
     private By locator;
+
 
     // --------- Browser Related ----------//
     private WebDriverManager getWebDriverManager(String type) {
@@ -112,7 +113,7 @@ public class UiActions {
     }
 
     // ------ Element Locators & Transitions --------- //
-    public UiActions at(String query) {
+    public UserActions at(String query) {
         if (query.contains("//") || query.contains("@")) {
             locator = By.xpath(query);
         } else {
@@ -121,7 +122,7 @@ public class UiActions {
         return this;
     }
 
-    public UiActions thenAt(String query) {
+    public UserActions thenAt(String query) {
         if (query.contains("//") || query.contains("@")) {
             locator = By.xpath(query);
         } else {
@@ -130,7 +131,7 @@ public class UiActions {
         return this;
     }
 
-    public UiActions and() {
+    public UserActions and() {
         return this;
     }
 
@@ -190,7 +191,7 @@ public class UiActions {
         Assert.assertTrue(text.contains(subtext), errMsg);
     }
 
-    public UiActions highlightIt() {
+    public UserActions highlightIt() {
         WebElement found = findsElement(locator);
         JavascriptExecutor jse = (JavascriptExecutor) driver;
         String script = "arguments[0].setAttribute('style', 'border: 2px solid purple');";
@@ -212,7 +213,7 @@ public class UiActions {
         return texts;
     }
 
-    public UiActions pauseForSec(int second) {
+    public UserActions pauseForSec(int second) {
         try {
             Thread.sleep(second * 1000L);
         } catch (InterruptedException e) {
@@ -221,7 +222,7 @@ public class UiActions {
         return this;
     }
 
-    public UiActions pauseForMin(int minute) {
+    public UserActions pauseForMin(int minute) {
         try {
             long duration = (long) minute * 60 * 1000;
             Thread.sleep(duration);
