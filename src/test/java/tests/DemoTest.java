@@ -4,6 +4,7 @@ import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
 //@Listeners(core.TestDetection.class)
+@Listeners(com.epam.reportportal.testng.ReportPortalTestNGListener.class)
 public class DemoTest extends TestRunner {
 
 

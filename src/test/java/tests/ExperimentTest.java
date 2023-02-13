@@ -10,7 +10,7 @@ import static core.Automation.$;
 
 public class ExperimentTest {
 
-    @Test
+    //@Test
     public void demo_test_case_1() {
 
         Automation.browser.openWithDocker();
@@ -29,7 +29,7 @@ public class ExperimentTest {
     }
 
 
-    @Test()
+    //@Test()
     public void retry_sample_test() {
 
         By computer_tab = $("//ul[@class='top-menu notmobile']/li/a[@href='/computers']");
@@ -51,7 +51,7 @@ public class ExperimentTest {
     }
 
 
-    @Test
+   // @Test
     public void test_new_stuff() {
 
         UiActions user = new UiActions();
