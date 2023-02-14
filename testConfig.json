@@ -3,7 +3,7 @@
 
   "browser": {
     "choice": "chrome",
-    "video": false,
+    "video": true,
     "vnc": false
   },
 

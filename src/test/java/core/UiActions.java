@@ -12,6 +12,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Class that abstracts the complex low level Selenium automation
+ * code. Tester can modify and add new methods as they see fit.
+ *
+ * @author Nijat Muhtar
+ */
 public class UiActions {
 
     private final Duration timeLimit = Duration.ofSeconds(5);
@@ -36,6 +42,10 @@ public class UiActions {
         }
     }
 
+    /**
+     * Opens the desired browser with desired configuration. You can
+     * configure this on testConfig.json file from project root directory.
+     */
     public void opensBrowser() {
         String choice = TestConfig.extract("$.browser.choice");
         boolean video = TestConfig.extract("$.browser.video");
@@ -71,9 +81,16 @@ public class UiActions {
         }
     }
 
+    /**
+     *
+     */
     public void closesBrowser() {
         if (driver == null) return;
         driver.quit();
+    }
+
+    public WebDriver driver() {
+        return driver;
     }
 
     public void refreshesPage() {
@@ -264,5 +281,9 @@ public class UiActions {
 
     public void changeToMainPage() {
         driver = driver.switchTo().defaultContent();
+    }
+
+    public String root() {
+        return System.getProperty("user.dir");
     }
 }

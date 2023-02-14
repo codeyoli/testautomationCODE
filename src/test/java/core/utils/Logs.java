@@ -1,10 +1,11 @@
-package core;
+package core.utils;
 
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.model.Media;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.util.Base64;
 
 public class Logs {
@@ -62,10 +63,11 @@ public class Logs {
         LOGGER.warn("RP_MESSAGE#{}#{}",message);
     }
 
+    public static void _RPFILE(File file, String message) {
+        LOGGER.info("RP_MESSAGE#FILE#{}#{}", file.getAbsolutePath(), message);
+    }
 
     public static void _RPIMG(String base64, String message) {
         LOGGER.info("RP_MESSAGE#BASE64#{}#{}", base64, message);
     }
-
-
-}
+}//end::class

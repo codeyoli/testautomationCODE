@@ -3,9 +3,9 @@ package core;
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
+import core.utils.FileManager;
+import core.utils.Logs;
 import org.testng.*;
-
-import java.io.File;
 
 
 public class TestDetection
@@ -61,11 +61,11 @@ public class TestDetection
     // --- Test Case Result --- //
     public void onTestSuccess(ITestResult result) {
         String name = result.getName();
-        deletePassedRecordings(name);
+
     }
 
     public void onTestFailure(ITestResult result) {
-
+        String name = result.getName();;
     }
 
     public void onTestSkipped(ITestResult result) {
@@ -76,25 +76,4 @@ public class TestDetection
 
     }
 
-
-    /*
-     * Use this to delete the recorded video of passed test cases. This method is effective when
-     * the video recording is enabled for test execution and TestDetection is registered as test listener.
-     *
-     */
-    private void deletePassedRecordings(String prefix) {
-        File directory = new File(Automation.util.root()+"/video/");
-        File[] files = directory.listFiles();
-        for (File file : files) {
-            if (file.isFile() && file.getName().startsWith(prefix)) {
-                if (file.delete()) {
-                    String message = "The file " + file.getName() + " was successfully deleted";
-                    System.out.println(message);
-                } else {
-                    String message = "The file " + file.getName() + " could not be deleted";
-                    System.out.println(message);
-                }
-            }
-        }//end::for
-    }
 }//end::class

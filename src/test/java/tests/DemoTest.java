@@ -1,12 +1,14 @@
 package tests;
 
+import com.epam.reportportal.testng.ReportPortalTestNGListener;
+import core.utils.Logs;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
+import java.io.File;
 
-//@Listeners(core.TestDetection.class)
-@Listeners(com.epam.reportportal.testng.ReportPortalTestNGListener.class)
+
+@Listeners({ReportPortalTestNGListener.class, core.TestDetection.class})
 public class DemoTest extends TestRunner {
-
 
     @Test
     public void test_new_stuff() {
@@ -31,6 +33,16 @@ public class DemoTest extends TestRunner {
         user.pauseForSec(2);
         user.at(pass_input).types("StrongPass123!");
         user.at(sign_in).clicks();
+        stopAutomation();
+    }
+
+
+    @Test
+    public void file_upload_test() {
+        startAutomation();
+        String path = System.getProperty("user.dir") + "/year_up_test_case_demo_run.mp4";
+        File video = new File(path);
+        Logs._RPFILE(video, "Recorded video");
         stopAutomation();
     }
 

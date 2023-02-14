@@ -13,7 +13,6 @@
         <maven.compiler.target>18</maven.compiler.target>
     </properties>
 
-
     <dependencies>
         <dependency>
             <groupId>org.projectlombok</groupId>
